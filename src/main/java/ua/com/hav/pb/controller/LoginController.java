@@ -23,7 +23,7 @@ import java.util.Map;
 import static ua.com.hav.pb.validator.ReflectionValidator.*;
 
 /**
- * Created by yulia on 12.07.2017.
+ * Created by sunny on 12.07.2017.
  */
 @Controller
 @RequestMapping("/")
@@ -39,9 +39,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(User user, HttpSession session) {
-        System.out.println("user = " + user);
         User loggedUser = userDao.login(user.getLogin(), user.getPassword());
-        System.out.println("loggedUser = " + loggedUser);
         if (loggedUser != null) {
             session.setAttribute("loggeduser", loggedUser);
             return "redirect:/contact/";
@@ -64,26 +62,17 @@ public class LoginController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String register(User user, Model model, HttpSession session) {
 
-        System.out.println("user = " + user);
-        System.out.println(user.getPassword());
         Map<String, String> errors = validate(user);
-        System.out.println("errors = " + errors);
         if (errors.size() > 0) {
             model.addAttribute("errors", errors);
             return "regpage";
         }
         if (userDao.save(user)) {
-            session.setAttribute("msg", new Message("Successful registration! You may login"));
+            session.setAttribute("msg", new Message("Successful registration! You may login."));
             return "redirect:/index";
         }
-        model.addAttribute("msg", new Message("Login is taken"));
+        model.addAttribute("msg", new Message("Login is taken."));
         return "regpage";
     }
 
-//    @RequestMapping("/errors")
-//    public String error(Model model) {
-//        if (true) throw new ArrayIndexOutOfBoundsException("nnnn");
-//        model.addAttribute("msg", "Something went wrong...");
-//        return "error";
-//    }
 }

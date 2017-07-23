@@ -1,28 +1,22 @@
 package ua.com.hav.pb.domain;
 
-//import javax.persistence.Entity;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.Id;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 public class User {
 
 	private Long id;
 
-	@Size(min = 5, max = 10, message = "size is wrong (5-10)")
-	@Pattern(regexp = "[A-Za-z]{1}[A-Za-z0-9]+", message = "letter, letters or digits")
+	@Size(min = 3, max = 10, message = "wrong length (3-10)")
+	@Pattern(regexp = "[A-Za-z]+", message = "letters only")
 	private String login;
 
-	@Size(min = 5, max = 10, message = "size is wrong (5-10)")
-	@Pattern(regexp = "[A-Za-z]{1}[A-Za-z0-9]+", message = "letter, letters or digits")
+	@Size(min = 5, max = 10, message = "wrong length (5-10)")
+	@Pattern(regexp = "[A-Za-z]{1}[A-Za-z0-9]+", message = "letters or digits, starts with a letter")
 	private String password;
 
-	@Size(min = 4, max = 10, message = "size is wrong (4-10)")
+	@Size(min = 5, max = 10, message = "wrong length (5-10)")
 	private String name;
-
-	private List<Contact> contacts;
 
 	public User() {
 	}
@@ -80,14 +74,7 @@ public class User {
 	}
 
 	public String toString() {
-		return "User{id= " + getId() + ", login= '" + getLogin() + "', password= '***', name= '" + getName() + "'}";
+		return "User{id= " + getId() + ", login= '" + getLogin() + "', password= '<-SECURED->', name= '" + getName() + "'}";
 	}
 
-	public void setContacts(List<Contact> contacts) {
-		this.contacts = contacts;
-	}
-
-	public List<Contact> getContacts() {
-		return contacts;
-	}
 }

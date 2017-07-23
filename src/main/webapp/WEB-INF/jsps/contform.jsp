@@ -3,13 +3,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
-  <head>
+<head>
     <title>
-      Main page - Phone book
+        Main page - Phone book
     </title>
     <%--<style>--%>
-      <%--td {text-align: center}--%>
-      <%--th {text-align: right}--%>
+    <%--td {text-align: center}--%>
+    <%--th {text-align: right}--%>
     <%--</style>--%>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -20,90 +20,106 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  </head>
-  <body>
+</head>
+<body>
 
-      <c:import url="navbar.jsp"/>
+    <c:import url="navbar.jsp"/>
 
-      
-          <table class='table table-hover' >
+    <div class="container centered">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-6">
+            <table class='table table-hover' width="50%">
 
-              <tr>
-                  <th align=center width="30">ID</th>
-                  <th width=100>NAME</th>
-                  <th width=100>L.NAME</th>
-                  <th width=100>M.NAME</th>
-                  <th width=150>MOB. PHONE</th>
-                  <th width=150>HOME PHONE</th>
-                  <th width=200>ADDRESS</th>
-                  <th width="150">EMAIL</th>
-                  <th>ACTIONS</th>
-              </tr>
-            <tr>
-              <form action='/contact/save' method='post'>
-              <td>
-                <input type='text' class='form-control' name='id' value='${contact.id}' readonly="true">
-              </td>
-              <td>
-                <input type='text' class='form-control' name='firstName' value='${contact.firstName}'
-                <%--pattern="[A-ZА-Я]{1}[a-zа-я]{2,9}"--%>
-                title="10 letters long, starts from capital"/>
-                  <span style="color: red; font-size: small">${errors.firstName}</span>              </td>
-              <td>
-                <input type='text' class='form-control' name='lastName' value='${contact.lastName}'
-                       <%--pattern="[A-ZА-Я]{1}[a-zа-я]{2,9}"--%>
-                       title="10 letters long, starts from capital"/>
-                  <span style="color: red; font-size: small">${errors.lastName}</span>
-              </td>
-              <td>
-                <input type='text' class='form-control' name='middleName' value='${contact.middleName}'
-                       <%--pattern="[A-ZА-Я]{1}[a-zа-я]{2,9}"--%>
-                       title="10 letters long, starts from capital"/>
-                  <span style="color: red; font-size: small">${errors.middleName}</span>
-              </td>
-              <td>
-                <input type='text' class='form-control' name='mobile' value='${contact.mobile}'
-                       <%--pattern="^\+38\(0[0-9]{2,3}\)[0-9]{6,7}$"--%>
-                       <%--required="true"--%>
-                       title="+38(0XX)XXXXXXX"/>
-                  <span style="color: red; font-size: small">${errors.mobile}</span>
-              </td>
-              <td>
-                <input type='text' class='form-control' name='home' value='${contact.home}'
-                       <%--pattern="^\+38\(0[0-9]{2,3}\)[0-9]{6,7}$"--%>
-                       <%--required="true"--%>
-                       title="+38(0XX)XXXXXXX"/>
-                  <span style="color: red; font-size: small">${errors.home}</span>
+                <tr>
+                    <th width="100">LABEL</th>
+                    <th width="400">INPUT</th>
+                </tr>
+                <form action='/contact/save' method='post'>
+                    <c:if test="${not empty contact.id}">
+                        <tr>
+                            <td>ID</td>
+                            <td>
+                                <input type='text' class='form-control' name='id' value='${contact.id}' readonly="true">
+                            </td>
+                        </tr>
+                    </c:if>
+                    <tr>
+                        <td>LAST NAME</td>
+                        <td>
+                            <input type='text' class='form-control' name='lastName' value='${contact.lastName}'
+                                   title="4 - 10 letters long"/>
+                            <span style="color: red; font-size: small">${errors.lastName}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>FIRST NAME</td>
+                        <td>
+                            <input type='text' class='form-control' name='firstName' value='${contact.firstName}'
+                                   title="4 - 10 letters long"/>
+                            <span style="color: red; font-size: small">${errors.firstName}</span>              </td>
+                    </tr>
 
-              </td>
-              <td>
-                <input type='text' class='form-control' name='address' value='${contact.address}'/>
-                  <span style="color: red; font-size: small">${errors.address}</span>
-                <%--pattern="^.{1,35}$">--%>
-              </td>
-              <td>
-                <input type="text" class="form-control" name="email" value="${contact.email}"
-                <%--pattern="^.+@.+\..+$"--%>
-                       <%--maxlength="10"--%>
-                title="xxx@xxx.xxx"/>
-                  <span style="color: red; font-size: small">${errors.email}</span>
-              </td>
-              <td>
-                  <c:set var="capt" value=""/>
-                  <c:if test="${empty contact.id}">
-                    <c:set var="capt" value=" new"/>
-                  </c:if>
-                <input type='submit' class="btn btn-success" value='Save${capt} contact' name='id'>
-              </td>
-              </form>
-            </tr>
+                    <tr>
+                        <td>FATHER's NAME</td>
+                        <td>
+                            <input type='text' class='form-control' name='middleName' value='${contact.middleName}'
+                                   title="4 - 10 letters long"/>
+                            <span style="color: red; font-size: small">${errors.middleName}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MOBILE PHONE</td>
+                        <td>
+                            <input type='text' class='form-control' name='mobile' value='${contact.mobile}'
+                                   title="use the following pattern: +38(0ZZ)XXXXXXX Z - two digits, X - seven"/>
+                            <span style="color: red; font-size: small">${errors.mobile}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>HOME PHONE</td>
+                        <td>
+                            <input type='text' class='form-control' name='home' value='${contact.home}'
+                                   title="use the following pattern: +38(0ZZ)XXXXXXX Z - two digits, X - seven"/>
+                            <span style="color: red; font-size: small">${errors.home}</span>
 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ADDRESS</td>
+                        <td align="left">
+                            <input type="text" class='form-control' name='address'
+                                   title="Your address"
+                                   value="${contact.address}"/>
+                            <span style="color: red; font-size: small">${errors.address}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>EMAIL</td>
+                        <td>
+                            <input type="text" class="form-control" name="email" value="${contact.email}"
+                                   title="use the following pattern: 'user@name.domain'"/>
+                            <span style="color: red; font-size: small">${errors.email}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <c:set var="capt" value=""/>
+                            <c:if test="${empty contact.id}">
+                                <c:set var="capt" value=" new"/>
+                            </c:if>
+                            <input type='submit' class="btn btn-success" value='Save${capt} contact'/>
+                        </td>
+                    </tr>
+                </form>
 
+            </table>
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
 
-
-          </table>
-
-      <hr>
+    <hr>
     <div align="center">(c) Sunny, 2017</div>
-  </body>
+</body>
 </html>

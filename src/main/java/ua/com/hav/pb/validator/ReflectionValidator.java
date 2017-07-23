@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by yulia on 18.07.2017.
+ * Created by sunny on 18.07.2017.
  */
 public class ReflectionValidator {
 

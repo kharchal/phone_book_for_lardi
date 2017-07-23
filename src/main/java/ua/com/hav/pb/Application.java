@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import ua.com.hav.pb.config.BeanConfig;
 import ua.com.hav.pb.config.WebConfig;
+import ua.com.hav.pb.dao.NotConfiguredException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,15 +23,9 @@ public class Application extends SpringBootServletInitializer {
 
 	private static Class applicationClass = Application.class;
 	public static String KEY = "-Dlardi.conf=";
+
 	public static void main(String[] args) {
-//		BeanConfig.configure();
-		FileInputStream fis;
 		Properties property = new Properties();
-		String file1 = null;
-		String file2 = null;
-		String userName = null;
-		String userPass = null;
-		String dbUrl = null;
 		int configType = -1;
 		String conf = "";
 		if (args.length > 0) {
@@ -40,35 +35,30 @@ public class Application extends SpringBootServletInitializer {
 			}
 		}
 		try {
-//			fis = new FileInputStream("c:/pb/conf/mysqlconf.properties");
-			fis = new FileInputStream(conf);
-
-			property.load(fis);
-
+			property.load(new FileInputStream(conf));
 			String type = property.getProperty("config.type");
 			configType = Integer.parseInt(type);
-			if (configType == 1) {
-				file1 = property.getProperty("file.user");
-				file2 = property.getProperty("file.contact");
-				BeanConfig.configure(file1, file2);
-			} else if (configType == 0) {
-				userName = property.getProperty("mysql.user");
-				userPass = property.getProperty("mysql.pass");
-				dbUrl = property.getProperty("mysql.url");
-				BeanConfig.configure(userName, userPass, dbUrl);
+			switch (configType) {
+				case 1: {
+					BeanConfig.configure(
+							property.getProperty("file.user"),
+							property.getProperty("file.contact"));
+					break;
+				}
+				case 0: {
+					BeanConfig.configure(
+							property.getProperty("mysql.user"),
+							property.getProperty("mysql.pass"),
+							property.getProperty("mysql.url"));
+					break;
+				}
 			}
-
-			System.out.println("configType = " + configType);
-			System.out.println("file1 = " + file1);
-			System.out.println("file2 = " + file2);
-			System.out.println("userName = " + userName);
-			System.out.println("userPass = " + userPass);
-			System.out.println("dbUrl = " + dbUrl);
-
+			if (configType == -1) {
+				throw new NotConfiguredException();
+			}
 		} catch (IOException e) {
 			System.err.println("ОШИБКА: Файл свойств отсуствует!");
 		}
-//		BeanConfig.configure(file1, file2);
 		SpringApplication.run(Application.class, args);
 	}
 

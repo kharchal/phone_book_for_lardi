@@ -1,98 +1,91 @@
 package ua.com.hav.pb.dao.file;
 
-import javenue.csv.Csv;
 import ua.com.hav.pb.dao.ContactDao;
 import ua.com.hav.pb.domain.Contact;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 public class ContactDaoFileImpl implements ContactDao {
 
-	private String fileName;
+    public static final int ID = 0;
+    public static final int NAME = 1;
+    public static final int LAST_NAME = 2;
+    public static final int MIDDLE_NAME = 3;
+    public static final int MOBILE = 4;
+    public static final int PHONE = 5;
+    public static final int ADDRESS = 6;
+    public static final int EMAIL = 7;
+    public static final int USER_ID = 8;
+    public static final int MAX_SIZE = 9;
+
+    private CsvFileUtil fileUtil;
 
 	public ContactDaoFileImpl(String fileName) {
-		this.fileName = fileName;
-		File file = new File(fileName);
-		if (!file.exists()) {
-			try {
-				FileWriter fileWriter = new FileWriter(fileName);
-				fileWriter.write("#contact");
-				fileWriter.flush();
-				fileWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		System.out.println("contact dao fileName = " + fileName);
+		fileUtil = new CsvFileUtil(fileName, asList(ID, USER_ID));
+		fileUtil.ensureFile("contacts");
 	}	
 
 	public synchronized void save(Contact contact, Long userId) {
-		try {
-			Csv.Reader reader = new Csv.Reader(new FileReader(fileName)).delimiter(',').ignoreComments(true);
-			List<List<String>> lines = new ArrayList<>();
-			Long maxId = 0L;
-			List<String> line = reader.readLine();
-			while (line != null) {
-				lines.add(line);
-				Long id = Long.parseLong(line.get(0));
-				if (id > maxId) {
-					maxId = id;
-				}
-				line = reader.readLine();
-			}
-			reader.close();
-			List<String> newLine = asList("" + ++maxId, contact.getFirstName(), contact.getLastName(),
-					contact.getMiddleName(), contact.getMobile(), contact.getHome(), contact.getAddress(),
-					contact.getEmail(), "" + userId);
+        List<List<String>> lines = fileUtil.read();
+        String id = String.valueOf(contact.getId());
+        if (contact.getId() == null) {
+//        	long maxId = 0L;
+//        	for (List<String> line : lines) {
+//				long l = Long.parseLong("123");
+//				System.out.println("line = " + line);
+//				System.out.println(line.size());
+//				String idFormFile = line.get(ID);
+//				System.out.println("id = '" + idFormFile + "'; size i = " + idFormFile.length());
+//				char[] chars = idFormFile.toCharArray();
+//				byte[] bytes = idFormFile.getBytes();
+//				idFormFile = "";
+//				if (!idFormFile.matches("[0-9]")) {
+//
+//					for (char ch : chars) {
+//					System.out.println("ch = '" + ch + "'; ? = " + ((int) ch));
+//					if (ch >= '0' && ch <= '9') {
+//						idFormFile += ch;
+//					}
+//				}
+//				int xx = Integer.parseInt(line.get(ID));
+//					if (xx > maxId) {
+//        			maxId = xx;
+//				}
+//			}
+            Long maxId =
+					lines.stream()
+                    .mapToLong(line -> Long.parseLong(line.get(ID)))
+//							.forEach(System.ou
+                    .max()
+                    .getAsLong();
+            id = String.valueOf(++maxId);
+        } else {
+            lines = lines.stream()
+                    .filter(line -> !(line.get(ID).equals(String.valueOf(contact.getId()))
+                                    && line.get(USER_ID).equals(String.valueOf(userId))))
+                    .collect(toList());
+        }
+        lines.add(asList(id, contact.getFirstName(), contact.getLastName(),
+					contact.getMiddleName(), contact.getMobile(), contact.getHome(),
+                    contact.getAddress(), contact.getEmail(), "" + userId));
 
-			lines.add(newLine);
-			Csv.Writer writer = new Csv.Writer(fileName).delimiter(',');
-			for (List<String> ln : lines) {
-                System.out.println("line = " + ln);
-                for (String s: ln) {
-                    System.out.print("s = " + s);
-                    writer.value(s);
-				}
-                System.out.println();
-                writer.newLine();
-			}
-			writer.flush();
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+        fileUtil.write(lines);
 	}
 
 	public synchronized void delete(Long id, Long userId) {
-		try {
-			Csv.Reader reader = new Csv.Reader(new FileReader(fileName));
-			List<List<String>> lines = new ArrayList<>();
-			List<String> line = reader.readLine();
-			while (line != null) {
-				if (!(Long.parseLong(line.get(0)) == id) || !(Long.parseLong(line.get(8)) == userId)) {
-					lines.add(line);
-				}
-				line = reader.readLine();
-			}
-			reader.close();
-			Csv.Writer writer = new Csv.Writer(fileName).delimiter(',');
-			for (List<String> ln : lines) {
-				for (String s : ln) {
-					writer.value(s);
-				}
-				writer.newLine();
-			}
-			writer.flush();
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        if (id == null || userId == null) {
+            throw new IllegalArgumentException();
+        }
+        String idString = String.valueOf(id);
+        String userIdString = String.valueOf(userId);
+        List<List<String>> lines = fileUtil.read().stream()
+                .filter(line -> !(line.get(ID).equals(idString) && line.get(USER_ID).equals(userIdString)))
+                .collect(toList());
+        fileUtil.write(lines);
 
 	}
 
@@ -100,90 +93,61 @@ public class ContactDaoFileImpl implements ContactDao {
 		if (id == null || userId == null) {
 			throw new IllegalArgumentException();
 		}
-		Contact contact = null;
-		try {
-			Csv.Reader reader = new Csv.Reader(new FileReader(fileName)).delimiter(',').ignoreComments(true);
-			List<String> line = reader.readLine();
-			while (line != null) {
-				if (Long.parseLong(line.get(0)) == id && Long.parseLong(line.get(8)) == userId) {
-					contact = assemble(line);
-				}
-				line = reader.readLine();
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return contact;
-
+        String idString = String.valueOf(id);
+        String userIdString = String.valueOf(userId);
+		return assemble(fileUtil.read().stream()
+                .filter(line -> line.get(ID).equals(idString) && line.get(USER_ID).equals(userIdString))
+                .collect(toList()).get(0));
 	}
 
 	public synchronized List<Contact> findForUser(Long userId) {
 		if (userId == null) {
 			throw new IllegalArgumentException();
 		}
-		List<Contact> contacts = new ArrayList<>();
-		try {
-			Csv.Reader reader = new Csv.Reader(new FileReader(fileName)).delimiter(',')
-                    .ignoreComments(true).ignoreEmptyLines(true);
-			List<String> line = reader.readLine();
-			while (line != null) {
+        String userIdString = String.valueOf(userId);
 
-				if (Long.parseLong(line.get(8)) == userId) {
-					contacts.add(assemble(line));
-				}
-				line = reader.readLine();
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return contacts;
-	}
+        return fileUtil.read().stream()
+                .filter(line -> line.get(USER_ID).equals(userIdString))
+                .collect(toList())
+                .stream()
+                .map(line -> assemble(line))
+                .collect(toList());
+    }
 
 	public synchronized List<Contact> find(String str, Long userId) {
 		if (str == null || userId == null) {
 			throw new IllegalArgumentException();
 		}
-		boolean empty = str.equals("");
-		List<Contact> contacts = new ArrayList<>();
-		try {
-			Csv.Reader reader = new Csv.Reader(new FileReader(fileName)).delimiter(',').ignoreComments(true);
-			List<String> line = reader.readLine();
-			while (line != null) {
-				if (Long.parseLong(line.get(8)) == userId) {
-					if (empty) {
-						contacts.add(assemble(line));
-					} else if (line.get(1).contains(str)
-							|| line.get(2).contains(str)
-							|| line.get(4).contains(str)
-							|| line.get(5).contains(str)) {
+        String userIdString = String.valueOf(userId);
+        boolean empty = str.equals("");
+        final String search = str.toLowerCase();
+        return fileUtil.read().stream()
+                .filter(line -> line.get(USER_ID).equals(userIdString))
+                .filter(line -> (empty) ? true :
+                        line.get(NAME).contains(search)
+                        || line.get(LAST_NAME).contains(search)
+                        || line.get(MOBILE).contains(search)
+                        || line.get(PHONE).contains(search))
+                .collect(toList())
+                .stream()
+                .map(line -> assemble(line))
+                .collect(toList());
 
-						contacts.add(assemble(line));
-						
-					}
-				}
-				line = reader.readLine();
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return contacts;
 	}
 
-	public Contact assemble(List<String> arr) {
+	private Contact assemble(List<String> arr) {
 		Contact contact = null;
-		if (arr != null && arr.size() == 9) {
-			contact.setId(Long.parseLong(arr.get(0)));
-			contact.setFirstName(arr.get(1));
-			contact.setLastName(arr.get(2));
-			contact.setMiddleName(arr.get(3));
-			contact.setMobile(arr.get(4));
-			contact.setHome(arr.get(5));
-			contact.setAddress(arr.get(6));
-			contact.setEmail(arr.get(7));
-			contact.setUserId(Long.parseLong(arr.get(8)));
+		if (arr != null && arr.size() == MAX_SIZE) {
+		    contact = new Contact();
+			contact.setId(Long.parseLong(arr.get(ID)));
+			contact.setFirstName(arr.get(NAME));
+			contact.setLastName(arr.get(LAST_NAME));
+			contact.setMiddleName(arr.get(MIDDLE_NAME));
+			contact.setMobile(arr.get(MOBILE));
+			contact.setHome(arr.get(PHONE));
+			contact.setAddress(arr.get(ADDRESS));
+			contact.setEmail(arr.get(EMAIL));
+			contact.setUserId(Long.parseLong(arr.get(USER_ID)));
 		}
 		return contact;
 	}

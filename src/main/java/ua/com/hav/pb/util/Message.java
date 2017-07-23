@@ -1,7 +1,7 @@
 package ua.com.hav.pb.util;
 
 /**
- * Created by yulia on 19.07.2017.
+ * Created by sunny on 19.07.2017.
  */
 public class Message {
     private String message;

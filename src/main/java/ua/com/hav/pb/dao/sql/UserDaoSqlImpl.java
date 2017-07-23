@@ -35,6 +35,7 @@ public class UserDaoSqlImpl implements UserDao {
 				user = new User();
 				user.setId(rs.getLong("id"));
 				user.setName(rs.getString("name"));
+				user.setPassword("<-SECURED->");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -48,7 +49,6 @@ public class UserDaoSqlImpl implements UserDao {
 		}
 		boolean ok = false;
 		try (Connection con = dataSource.getConnection()) {
-//			con.setTransaction();
 			PreparedStatement st = con.prepareStatement(LOGIN_CHECK);
 			st.setString(1, user.getLogin());
 			ResultSet rs = st.executeQuery();
@@ -64,5 +64,23 @@ public class UserDaoSqlImpl implements UserDao {
 			e.printStackTrace();
 		}
 		return ok;
+	}
+
+	@Override
+	public boolean checkLogin(String login) {
+		if (login == null) {
+			throw new IllegalArgumentException();
+		}
+		try (Connection con = dataSource.getConnection()) {
+			PreparedStatement st = con.prepareStatement(LOGIN_CHECK);
+			st.setString(1, login);
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 }

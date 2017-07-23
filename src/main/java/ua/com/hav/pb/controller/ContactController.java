@@ -12,11 +12,13 @@ import ua.com.hav.pb.domain.Contact;
 import ua.com.hav.pb.domain.User;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 import java.util.Map;
 
 import static ua.com.hav.pb.validator.ReflectionValidator.*;
 
+/**
+ * Created by sunny on 13.07.2017.
+ */
 @Controller
 @RequestMapping(value = "/contact")
 public class ContactController {
@@ -26,11 +28,8 @@ public class ContactController {
 
 	@RequestMapping(value = "/")
 	public String show(Model model, HttpSession session) {
-		System.out.println("/contact/");
-        User user = (User) session.getAttribute("loggeduser");
-		Long id = user.getId();
-		List<Contact> contacts = contactDao.findForUser(id);
-		model.addAttribute("contacts", contacts);
+		model.addAttribute("contacts",
+				contactDao.findForUser(((User) session.getAttribute("loggeduser")).getId()));
 		return "show";
 	}
 
@@ -42,52 +41,33 @@ public class ContactController {
 
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
 	public String login(@RequestParam String search, Model model, HttpSession session) {
-		System.out.println("/contact/search" + search);
-//		String str = parse(contact);
-        if (search == null) {
-            System.out.println("NULL");
-        }
-        if ("".equals(search)) {
-            System.out.println("\"\"");
-//            search = "%";
-        }
-        User user = (User) session.getAttribute("loggeduser");
-		List<Contact> contacts = contactDao.find(search, user.getId());
-		model.addAttribute("contacts", contacts);
+		model.addAttribute("contacts",
+				contactDao.find(search, ((User) session.getAttribute("loggeduser")).getId()));
 		return "show";
 	}
 
 	@RequestMapping("/delete/{id}")
 	public String delete(@PathVariable Long id, HttpSession session) {
-		System.out.println("contact/delete/" + id);
-        User user = (User) session.getAttribute("loggeduser");
-		contactDao.delete(id, user.getId());
+		contactDao.delete(id, ((User) session.getAttribute("loggeduser")).getId());
 		return "redirect:/contact/";
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String register(Contact contact, Model model, HttpSession session) {
-		System.out.println("/contact/save" + contact);
         Map<String, String> errors = validate(contact);
-        System.out.println("errors = " + errors);
         if (errors.size() > 0) {
             model.addAttribute("errors", errors);
-            return "contform";
+            return "/contform";
         }
-        User user = (User) session.getAttribute("loggeduser");
-		contactDao.save(contact, user.getId());
-
+		contactDao.save(contact, ((User) session.getAttribute("loggeduser")).getId());
 		return "redirect:/contact/";
 	}
 
 	@RequestMapping("/edit/{id}")
 	public String edit(@PathVariable Long id, Model model, HttpSession session) {
-		System.out.println("/contact/edit/" + id);
-		User user = (User) session.getAttribute("loggeduser");
-		Contact contact = contactDao.find(id, user.getId());
-		model.addAttribute("contact", contact);
+		model.addAttribute("contact",
+				contactDao.find(id, ((User) session.getAttribute("loggeduser")).getId()));
 		return "/contform";
 	}
-
 
 }

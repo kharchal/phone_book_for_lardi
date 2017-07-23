@@ -1,72 +1,58 @@
 package ua.com.hav.pb.domain;
 
-//import javax.persistence.Entity;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.Id;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * Created by yulia on 12.07.2017.
+ * Created by sunny on 12.07.2017.
  */
-//@Entity
 public class Contact {
 
-//    @Id
-//    @GeneratedValue
     private Long id;
 
-    @Size(min = 4, max = 10, message = "size is wrong (4-10)")
+    @Size(min = 4, max = 10, message = "wrong length (4-10)")
     private String lastName;
 
-    @Size(min = 4, max = 10, message = "size is wrong (4-10)")
+    @Size(min = 4, max = 10, message = "wrong length (4-10)")
     private String firstName;
 
-    @Size(min = 4, max = 10, message = "size is wrong (4-10)")
+    @Size(min = 4, max = 10, message = "wrong length (4-10)")
     private String middleName;
 
-    @Pattern(regexp = "^\\+38\\(0[0-9]{2}\\)[0-9]{7}$", message = "+38(XXX)XXXXXXX")
+    @Pattern(regexp = "^\\+38\\(0(39|50|6[36-8]|73|9[1-9])\\)[0-9]{7}$",
+            message = "+38(0XX)XXXXXXX or wrong mobile number")
     @NotNull(message = "must not be empty")
     private String mobile;
 
     @Null(message = "?..")
-    @Pattern(regexp = "^\\+38\\(0[0-9]{2}\\)[0-9]{7}$", message = "+38(XXX)XXXXXXX")
+    @Pattern(regexp = "^\\+38\\(0(3[1-8]|4[1346-8]|5[1-7]|6[12459]|[7-9]0)\\)[0-9]{7}$",
+            message = "+38(0XX)XXXXXXX or wrong phone number")
     private String home;
 
-    @Size(max = 35, message = "size is too big")
+    @Size(max = 35, message = "too long")
     private String address;
 
     @Null(message = "?...")
-    @Pattern(regexp = "^.+@.+\\..+$", message = "xxx@yyy.zzz")
-    @Size(max = 20, message = "size is too big")
+    @Pattern(regexp = "^.+@.+\\..+$", message = "use the pattern: xxx@yyy.zzz")
+    @Size(max = 20, message = "too long")
     private String email;
     private Long userId;
 
     public Contact() {
     }
 
-    public Contact(String lastName, String firstName, String middleName, String mobile, String home, String address) {
+    public Contact(Long id, String lastName, String firstName, String middleName, String mobile, String home, String address, String email) {
+        this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
         this.mobile = mobile;
         this.home = home;
         this.address = address;
+        this.email = email;
     }
-
-//    public Contact(String[] array, User user) {
-//        firstName = array[0];
-//        lastName = array[1];
-//        middleName = array[2];
-//        mobile = array[3];
-//        home = array[4];
-//        address = array[5];
-//        email = array[6];
-//        this.user = user;
-//    }
 
     public Long getId() {
         return id;

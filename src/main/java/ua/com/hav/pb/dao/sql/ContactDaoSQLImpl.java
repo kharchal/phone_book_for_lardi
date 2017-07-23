@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by yulia on 15.07.2017.
+ * Created by sunny on 15.07.2017.
  */
 public class ContactDaoSQLImpl implements ContactDao {
 
@@ -29,20 +29,6 @@ public class ContactDaoSQLImpl implements ContactDao {
     public static final String UPDATE = "UPDATE contact SET firstname =?, lastname =?, middlename = ?,"
             + " mobile =?, home =?, address =?, email =? WHERE user_id = ? AND id =?";
     public static final String DELETE = "DELETE FROM contact WHERE id = ? AND user_id =?;";
-
-    public List<Contact> findAll() {
-        List<Contact> list = new ArrayList<>();
-        try (Connection con = dataSource.getConnection()) {
-            PreparedStatement statement = con.prepareStatement("SELECT * FROM contact");
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                list.add(assemble(resultSet));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
 
     public List<Contact> findForUser(Long userId) {
         List<Contact> contacts = new ArrayList<>();
@@ -60,7 +46,7 @@ public class ContactDaoSQLImpl implements ContactDao {
     }
 
     public List<Contact> find(String str, Long userId) {
-        if (str == null ) {//|| str.equals("")) {
+        if (str == null ) {
             throw new IllegalArgumentException();
         }
 

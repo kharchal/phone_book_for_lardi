@@ -24,7 +24,7 @@
             <br>
             <span style="color: red;">${msg}</span>
             <h3>
-                Authentificate or <a href="/regform">register</a> yourself, please: &nbsp;
+                Login or <a href="/regform">register</a> please: &nbsp;
             </h3>
             <table border=0 align="center">
                 <tr>
@@ -35,15 +35,13 @@
                                    placeholder='Login'
                                    size=10
                                    required=true
-                                   pattern='[A-Za-z]{1}[A-Za-z0-9]{3,9}'
-                                   title='Letters or digits, starts from a letter, 4-10 symbols long'/>
+                                   title='Letters only (3-10)'/>
                             <input type='password'  class="form-control"
                                    name='password'
                                    placeholder='Password'
                                    size=10
                                    required=true
-                                   pattern='[A-Za-z]{1}[A-Za-z0-9]{3,9}'
-                                   title='Letters or digits, starts from a letter, 4-10 symbols long'/>
+                                   title='Letters or digits, starts with a letter (5-10 symbols)'/>
                             <input type='submit' value='Login' class="btn btn-info"/>
 
                         </form>

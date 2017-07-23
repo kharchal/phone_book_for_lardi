@@ -2,10 +2,11 @@ package ua.com.hav.pb.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * Created by yulia on 12.07.2017.
+ * Created by sunny on 12.07.2017.
  */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {

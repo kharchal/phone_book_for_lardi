@@ -16,11 +16,10 @@ import ua.com.hav.pb.dao.sql.UserDaoSqlImpl;
 import javax.sql.DataSource;
 
 /**
- * Created by yulia on 12.07.2017.
+ * Created by sunny on 12.07.2017.
  */
 @Configuration
 public class BeanConfig {
-
 
     private static int config;
     private static String userFileName;

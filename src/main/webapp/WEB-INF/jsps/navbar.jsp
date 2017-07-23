@@ -6,7 +6,10 @@
         <div class="container-fluid">
                 <div class="navbar-header">
                     <!-- Logo section -->
-                    <a class="navbar-brand" href="/login">The Phone Book</a>
+                    <a class="navbar-brand" href="/login">
+                        <span class="glyphicon glyphicon-earphone"></span>&nbsp;
+                        The Phone Book
+                    </a>
                 </div>
             <ul class="nav navbar-nav">
 
@@ -30,7 +33,11 @@
                 <c:if test="${path eq 'regpage'}">
                     <c:if test="${not empty loggeduser}">
                         <li><a href="/contact/">List</a></li>
-                        <li class="active"><a href="/contact/new">Add new</a></li>
+                        <li class="active">
+                            <a href="#">
+                                <span class="glyphicon glyphicon-plus-sign"></span>&nbsp; Add new
+                            </a>
+                        </li>
                     </c:if>
                     <c:if test="${empty loggeduser}">
                         <li class="active"><a href="#">Register</a></li>
@@ -39,19 +46,21 @@
                 </c:if>
                 <c:if test="${path eq 'show'}">
                     <li class="active"><a href="#">List</a></li>
-                    <li><a href="/contact/new">Add new</a></li>
+                    <li><a href="/contact/new"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp; Add new</a></li>
                 </c:if>
                 <c:if test="${path eq 'contform'}">
                     <li><a href="/contact/">List</a></li>
-                    <li class="active"><a href="#">Edit/Add</a></li>
+                    <c:set var="edit">Edit</c:set>
+                    <c:if test="${empty contact.id}">
+                        <c:set var="edit">Add</c:set>
+                    </c:if>
+                    <li class="active"><a href="#">${edit}</a></li>
                 </c:if>
                 <li><a href="#" onclick="window.history.back();">Back</a></li>
 
         <%--</ul>--%>
                 <%--<li class="active"><a href="#">Contact List</a></li>--%>
                 <%--<li><a href="/contact/new">Add New Contact</a></li>--%>
-
-
 
 
                 <!-- Search section -->
